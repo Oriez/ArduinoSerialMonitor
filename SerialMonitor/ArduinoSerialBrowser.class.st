@@ -15,7 +15,9 @@ Class {
 		'graph',
 		'graphDisplay',
 		'graphDisplayAsSpec',
-		'currentPlatform'
+		'currentPlatform',
+		'portListLabel',
+		'serialOptionsLabel'
 	],
 	#category : #SerialMonitor
 }
@@ -24,11 +26,17 @@ Class {
 ArduinoSerialBrowser class >> defaultSpec [
 	^ SpecLayout composed
 	newRow: [ :row |
-	row add: #listPorts; add: #listOptions]
-	origin: 0 @ 0 corner: 1 @ 0.5;
+		row add: #portListLabel; add: #serialOptionsLabel]
+	origin: 0 @ 0 corner: 1 @ 0.05;
+	
+	newRow: [ :row |
+		row add: #listPorts; add: #listOptions]
+	origin: 0 @ 0.05 corner: 1 @ 0.5;
+	
 	newRow: [ :row | row add: #displayObject ]
 	origin: 0 @ 0.5 corner: 1 @ 1;
-	yourself
+	
+	yourself 
 ]
 
 { #category : #'as yet unclassified' }
@@ -149,7 +157,13 @@ ArduinoSerialBrowser >> initializeWidgets [
 	| selectedPort |
 	currentPlatform := OSPlatform current.
 	selectedOptions := self buildMonitorOptionsList.
+	serialOptionsLabel := self newLabel.
+	serialOptionsLabel label: 'Monitor View Options'.
+	
 	selectedPort := self buildPortList.
+	portListLabel := self newLabel.
+	portListLabel label: 'Port List'.
+	
 	serialModel := ArduinoSerial initializeWithPort: selectedPort.
 	serialMorph := ArduinoSerialMorph initializeWithModel: serialModel.
 	serialMorphAsSpec := serialMorph extent:400@300; asSpecAdapter.
@@ -164,8 +178,8 @@ ArduinoSerialBrowser >> initializeWidgets [
 	"specification of order of focus"
 	self focusOrder
 	add: listOptions;
-	add: listPorts
-	
+	add: listPorts;
+	add: portListLabel
 ]
 
 { #category : #accessing }
@@ -186,6 +200,11 @@ ArduinoSerialBrowser >> mapDisplay [
 { #category : #accessing }
 ArduinoSerialBrowser >> mapDisplayAsSpec [
 	^mapDisplayAsSpec
+]
+
+{ #category : #'as yet unclassified' }
+ArduinoSerialBrowser >> portListLabel [
+	^portListLabel
 ]
 
 { #category : #'as yet unclassified' }
@@ -210,6 +229,11 @@ ArduinoSerialBrowser >> selectPort: selectedPort [
 { #category : #accessing }
 ArduinoSerialBrowser >> serialMorphAsSpec [
 	^serialMorphAsSpec
+]
+
+{ #category : #accessing }
+ArduinoSerialBrowser >> serialOptionsLabel [
+	^serialOptionsLabel
 ]
 
 { #category : #api }
