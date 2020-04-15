@@ -60,7 +60,7 @@ ArduinoSerialBrowser >> buildGraph [
 	graph add: ds.
 
 	graph axisX noLabel; noTick.
-	graphDisplay := BorderedMorph new.
+	graphDisplay := RubScrolledTextMorph new.
 	graphView := graph build.
 	graphDisplay addMorph: graphView canvas buildMorph.
 	^graphDisplay 
@@ -68,27 +68,60 @@ ArduinoSerialBrowser >> buildGraph [
 
 { #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> buildMap [
-	| map e coordinates container |
-	container := RTView new
+	| map e coordinates view |
+	view := RTView new
 	   setCanvas: (TRCanvas new extent: 400 @ 300; yourself);
     	yourself.
 	map := RTOSM new.
 	e := map element.
 
-	container add: e.
+	view add: e.
 
 	coordinates := 32.1227355 @ 34.8066798.
 
-	container @ RTDraggableView @ RTZoomableView.
-	
-	container canvas camera translateTo: (map latLonToRoassal: coordinates).
-	container canvas camera noInitializationWhenOpen.
-	container canvas camera scale: 30.0.
-	RTEmptyViewContext setOnView: container.
-	mapDisplay := BorderedMorph new.
-	mapDisplay addMorph: container canvas buildMorph.
+	view @ RTDraggableView @ RTZoomableView.
+
+	view canvas camera translateTo: (map latLonToRoassal: coordinates).
+	view canvas camera noInitializationWhenOpen.
+	view canvas camera scale: 30.0.
+	RTEmptyViewContext setOnView: view.
+	"mapDisplay := serialMorph new."
+	"mapDisplay model: serialModel."
+	serialMorph addMorph: view canvas buildMorph.
 
 	^ mapDisplay.
+	
+]
+
+{ #category : #'as yet unclassified' }
+ArduinoSerialBrowser >> buildMap: selectedPort [
+	| map e coordinates view serialMapModel aMorph movingCamera |
+	view := RTView new
+	   setCanvas: (TRCanvas new extent: 400 @ 300; yourself);
+    	yourself.
+	map := RTOSM new.
+	e := map element.
+
+	view add: e.
+
+	coordinates := 32.1227355 @ 34.8066798.
+
+	view @ RTDraggableView @ RTZoomableView.
+   movingCamera := [ :locationLatLong |
+		view canvas camera translateTo: 
+			(map latLonToRoassal: locationLatLong). 
+		view signalUpdate ].
+	view canvas camera translateTo: (map latLonToRoassal: coordinates).
+	view canvas camera noInitializationWhenOpen.
+	view canvas camera scale: 30.0.
+	"RTEmptyViewContext setOnView: view."
+	"mapDisplay := serialMorph new."
+	"mapDisplay model: serialModel."
+	serialMapModel := ArduinoSerialMap initializeWithPortAndmovingCamera: selectedPort movingCamera: 	movingCamera.
+	aMorph := ArduinoSerialBasicMorph initializeWithModel: serialMapModel.
+	aMorph addMorph: view canvas buildMorph.
+
+	^ aMorph.
 	
 ]
 
@@ -164,13 +197,14 @@ ArduinoSerialBrowser >> initializeWidgets [
 	portListLabel := self newLabel.
 	portListLabel label: 'Port List'.
 	
+	"
 	serialModel := ArduinoSerial initializeWithPort: selectedPort.
-	serialMorph := ArduinoSerialMorph initializeWithModel: serialModel.
-	serialMorphAsSpec := serialMorph extent:400@300; asSpecAdapter.
+	serialMorph := ArduinoSerialBasicMorph initializeWithModel: serialModel."
 	
-	mapDisplay := self buildMap.
+	
+	mapDisplay := self buildMap: selectedPort.
 	mapDisplayAsSpec := mapDisplay extent:400@300; asSpecAdapter.
-	
+	serialMorphAsSpec := mapDisplay extent:400@300; asSpecAdapter.
 	graphDisplay := self buildGraph.
 	graphDisplayAsSpec := graphDisplay extent:400@300; asSpecAdapter.
 	
@@ -223,7 +257,7 @@ ArduinoSerialBrowser >> selectOption: text [
 
 { #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> selectPort: selectedPort [
-	serialMorph changePort: selectedPort
+	serialMorph changePort: selectedPort.
 ]
 
 { #category : #accessing }
