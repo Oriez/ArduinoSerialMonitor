@@ -27,15 +27,16 @@ ArduinoSerialMap class >> initializeWithPortAndmovingCamera: portString movingCa
 { #category : #'as yet unclassified' }
 ArduinoSerialMap >> appendText: aString [
    | splitted lat lon |
-text ifNil: [text := ''].
-
-	splitted := text splitOn: '@'.
+	text ifNil: [text := ''].
+    
+	splitted := aString splitOn: '@'.
 	splitted size > 1 ifTrue: [
 	lat:= splitted at: 1 asNumber.
 	lon:= splitted at: 2 asNumber.
-	movingCamera value: lat @ lon.].
+	movingCamera value: lat asNumber @ lon asNumber.
+	].
 	
-    text := text , aString.
+	text := text , aString.
 ]
 
 { #category : #'as yet unclassified' }
