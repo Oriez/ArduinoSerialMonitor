@@ -9,17 +9,36 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerialMapMorph class >> initializeWithModel: model [
-	|newObject|
-	newObject := self new initialize: model.
-	^ newObject
-]
+ArduinoSerialMapMorph class >> initialize: selectedPort [
+	|map e coordinates view aMorph movingCamera model |
 
-{ #category : #initialization }
-ArduinoSerialMapMorph class >> initializeWithModel: model movingCamera: movingCamera [
-	|newObject|
-	newObject := self new initialize: model movingCamera: movingCamera.
-	^ newObject
+	view := RTView new
+	   setCanvas: (TRCanvas new extent: 400 @ 300; yourself);
+    	yourself.
+	map := RTOSM new.
+	e := map element.
+
+	view add: e.
+
+	coordinates := 32.1227355 @ 34.8066798.
+
+	view @ RTDraggableView @ RTZoomableView.
+   movingCamera := [ :locationLatLong |
+		view canvas camera translateTo: 
+			(map latLonToRoassal: locationLatLong). 
+		view signalUpdate ].
+	view canvas camera translateTo: (map latLonToRoassal: coordinates).
+	view canvas camera noInitializationWhenOpen.
+	view canvas camera scale: 30.0.
+
+	model := ArduinoSerialMap initializeWithPortAndmovingCamera: selectedPort movingCamera: movingCamera. 
+	
+	aMorph := self new initializeWithModel: model movingCamera: movingCamera.
+	
+	aMorph addMorph: view canvas buildMorph.
+
+
+	^ aMorph
 ]
 
 { #category : #'as yet unclassified' }
@@ -39,25 +58,7 @@ ArduinoSerialMapMorph >> closePort [    self model close.
 ]
 
 { #category : #initialization }
-ArduinoSerialMapMorph >> initialize [ | tempModel |
-	super initialize.
-	tempModel := ArduinoSerial initializeWithPort: '/dev/cu.wchusbserial1410'.
-   self model: tempModel.
-
-
-]
-
-{ #category : #initialization }
-ArduinoSerialMapMorph >> initialize: newModel [
-	super initialize.
-   self model: newModel.
-
-
-]
-
-{ #category : #initialization }
-ArduinoSerialMapMorph >> initialize: newModel movingCamera: aMovingCamera. [
-	super initialize.
+ArduinoSerialMapMorph >> initializeWithModel: newModel movingCamera: aMovingCamera [
 	movingCamera := aMovingCamera.
    self model: newModel.
 

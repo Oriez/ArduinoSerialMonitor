@@ -8,8 +8,9 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerialBasicMorph class >> initializeWithModel: model [
-	|newObject|
+ArduinoSerialBasicMorph class >> initialize: selectedPort [
+	|newObject model |
+	model := ArduinoSerial initializeWithPort: selectedPort.
 	newObject := self new initialize: model.
 	^ newObject
 ]

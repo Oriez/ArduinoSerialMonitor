@@ -18,7 +18,8 @@ Class {
 		'currentPlatform',
 		'portListLabel',
 		'serialOptionsLabel',
-		'selectedPort'
+		'selectedPort',
+		'displayedMorph'
 	],
 	#category : #SerialMonitor
 }
@@ -68,38 +69,6 @@ ArduinoSerialBrowser >> buildGraph [
 ]
 
 { #category : #'as yet unclassified' }
-ArduinoSerialBrowser >> buildMap: selectedPort [
-	| map e coordinates view serialMapModel aMorph movingCamera |
-	view := RTView new
-	   setCanvas: (TRCanvas new extent: 400 @ 300; yourself);
-    	yourself.
-	map := RTOSM new.
-	e := map element.
-
-	view add: e.
-
-	coordinates := 32.1227355 @ 34.8066798.
-
-	view @ RTDraggableView @ RTZoomableView.
-   movingCamera := [ :locationLatLong |
-		view canvas camera translateTo: 
-			(map latLonToRoassal: locationLatLong). 
-		view signalUpdate ].
-	view canvas camera translateTo: (map latLonToRoassal: coordinates).
-	view canvas camera noInitializationWhenOpen.
-	view canvas camera scale: 30.0.
-	"RTEmptyViewContext setOnView: view."
-	"mapDisplay := serialMorph new."
-	"mapDisplay model: serialModel."
-	serialMapModel := ArduinoSerialMap initializeWithPortAndmovingCamera: selectedPort movingCamera: 	movingCamera.
-	aMorph := ArduinoSerialMapMorph initializeWithModel: serialMapModel movingCamera: movingCamera.
-	aMorph addMorph: view canvas buildMorph.
-
-	^ aMorph.
-	
-]
-
-{ #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> buildMonitorOptionsList [
 	listOptions := self newList.
 
@@ -146,11 +115,6 @@ ArduinoSerialBrowser >> extent [
 	^ 600@700
 ]
 
-{ #category : #accessing }
-ArduinoSerialBrowser >> graphDisplayAsSpec [
-	^graphDisplayAsSpec
-]
-
 { #category : #initialization }
 ArduinoSerialBrowser >> initializePresenter [
 	listOptions whenSelectedItemChanged: [ :text | self selectOption: text ]. 
@@ -170,16 +134,15 @@ ArduinoSerialBrowser >> initializeWidgets [
 	portListLabel := self newLabel.
 	portListLabel label: 'Port List'.
 	
-	serialModel := ArduinoSerial initializeWithPort: selectedPort.
-	serialMorph := ArduinoSerialBasicMorph initializeWithModel: serialModel.
-	
+	displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort.
+
 	"mapDisplay := self buildMap: selectedPort.
 	mapDisplayAsSpec := mapDisplay extent:400@300; asSpecAdapter."
-	serialMorphAsSpec := serialMorph extent:400@300; asSpecAdapter.
-	graphDisplay := self buildGraph.
-	graphDisplayAsSpec := graphDisplay extent:400@300; asSpecAdapter.
 	
-	displayObject := self graphDisplayAsSpec.
+	"graphDisplay := self buildGraph.
+	graphDisplayAsSpec := graphDisplay extent:400@300; asSpecAdapter."
+	
+	displayObject := displayedMorph extent:400@300; asSpecAdapter.
 	"specification of order of focus"
 	self focusOrder
 	add: listOptions;
@@ -202,11 +165,6 @@ ArduinoSerialBrowser >> mapDisplay [
 	^mapDisplay 
 ]
 
-{ #category : #accessing }
-ArduinoSerialBrowser >> mapDisplayAsSpec [
-	^mapDisplayAsSpec
-]
-
 { #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> portListLabel [
 	^portListLabel
@@ -215,16 +173,19 @@ ArduinoSerialBrowser >> portListLabel [
 { #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> selectOption: text [
 	| selected |
-	text = 'Basic' ifTrue: [ displayObject := self serialMorphAsSpec. selected:= 1].
-	text = 'Map' ifTrue: [ 
-		serialMorph closePort.
-		serialModel close.
-		mapDisplay := self buildMap: selectedPort.
-		mapDisplayAsSpec := mapDisplay extent:400@300; asSpecAdapter.
-		displayObject := self mapDisplayAsSpec. selected:= 2
+	text = 'Basic' ifTrue: [ 
+		displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort. 
+		selected:= 1
 		].
-	text = 'Graph' ifTrue: [ displayObject := self graphDisplayAsSpec. selected:= 3].
+	text = 'Map' ifTrue: [ 
+
+		"(Delay forMilliseconds: 2000) wait."
+		displayedMorph := ArduinoSerialMapMorph initialize: selectedPort.
+		selected:= 2
+		].
+	text = 'Graph' ifTrue: [ displayedMorph := self buildGraph. selected:= 3].
 	text ifNotNil: [ 
+	displayObject := displayedMorph extent:400@300; asSpecAdapter.
 	self needRebuild: false.
 	self buildWithSpecLayout: self defaultSpec.
 	self listOptions setSelectedIndex: selected.
@@ -235,16 +196,8 @@ ArduinoSerialBrowser >> selectOption: text [
 { #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> selectPort: aSelectedPort [
 	selectedPort := aSelectedPort.
-	selectedOptions = 'Basic' ifTrue: [ serialMorph changePort: aSelectedPort. ].
-	selectedOptions = 'Map' ifTrue: [ 
-		mapDisplay changePort: aSelectedPort. 
-		].
+	displayedMorph changePort: aSelectedPort.
 	"selectedOptions = 'Graph' ifTrue: [  ]"
-]
-
-{ #category : #accessing }
-ArduinoSerialBrowser >> serialMorphAsSpec [
-	^serialMorphAsSpec
 ]
 
 { #category : #accessing }

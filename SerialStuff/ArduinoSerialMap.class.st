@@ -18,9 +18,9 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerialMap class >> initializeWithPortAndmovingCamera: portString movingCamera: aMovingCamera [
+ArduinoSerialMap class >> initializeWithPortAndmovingCamera: portString movingCamera: movingCamera [
 	|newObject|
-	newObject := self new initialize: portString movingCamera: aMovingCamera.
+	newObject := self new initialize: portString movingCamera: movingCamera.
 	^ newObject
 ]
 
@@ -59,14 +59,6 @@ ArduinoSerialMap >> getText [
             self appendText: 'PRIMITIVE ERROR READING PORT !!'.
           ].
 	^text
-]
-
-{ #category : #'as yet unclassified' }
-ArduinoSerialMap >> initialize: portString [
-	myPortString := portString.
-	SerialPort allInstances do: [:port| port close].
-
-   
 ]
 
 { #category : #'as yet unclassified' }
