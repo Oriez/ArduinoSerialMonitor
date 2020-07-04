@@ -42,33 +42,6 @@ ArduinoSerialBrowser class >> defaultSpec [
 ]
 
 { #category : #'as yet unclassified' }
-ArduinoSerialBrowser >> buildGraph [
-	| points1 points2 ds graphView |
-	points1 := #(1 1 4 6).
-	points2 := #(2 4 2 10 5 2).
-
-	graph := RTGrapher new.
-	
-	ds := RTData new.
-	ds points: points1.
-	ds connectColor: Color blue.
-	ds y: #yourself.
-	graph add: ds.
-	
-	ds := RTData new.
-	ds points: points2.
-	ds connectColor: Color green.
-	ds y: #yourself.
-	graph add: ds.
-
-	graph axisX noLabel; noTick.
-	graphDisplay := RubScrolledTextMorph new.
-	graphView := graph build.
-	graphDisplay addMorph: graphView canvas buildMorph.
-	^graphDisplay 
-]
-
-{ #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> buildMonitorOptionsList [
 	listOptions := self newList.
 
@@ -135,14 +108,8 @@ ArduinoSerialBrowser >> initializeWidgets [
 	portListLabel label: 'Port List'.
 	
 	displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort.
-
-	"mapDisplay := self buildMap: selectedPort.
-	mapDisplayAsSpec := mapDisplay extent:400@300; asSpecAdapter."
-	
-	"graphDisplay := self buildGraph.
-	graphDisplayAsSpec := graphDisplay extent:400@300; asSpecAdapter."
-	
 	displayObject := displayedMorph extent:400@300; asSpecAdapter.
+	
 	"specification of order of focus"
 	self focusOrder
 	add: listOptions;
@@ -178,12 +145,13 @@ ArduinoSerialBrowser >> selectOption: text [
 		selected:= 1
 		].
 	text = 'Map' ifTrue: [ 
-
-		"(Delay forMilliseconds: 2000) wait."
 		displayedMorph := ArduinoSerialMapMorph initialize: selectedPort.
 		selected:= 2
 		].
-	text = 'Graph' ifTrue: [ displayedMorph := self buildGraph. selected:= 3].
+	text = 'Graph' ifTrue: [ 
+		displayedMorph := ArduinoSerialGraphMorph initialize: selectedPort.
+		selected:= 3
+		].
 	text ifNotNil: [ 
 	displayObject := displayedMorph extent:400@300; asSpecAdapter.
 	self needRebuild: false.
@@ -197,7 +165,7 @@ ArduinoSerialBrowser >> selectOption: text [
 ArduinoSerialBrowser >> selectPort: aSelectedPort [
 	selectedPort := aSelectedPort.
 	displayedMorph changePort: aSelectedPort.
-	"selectedOptions = 'Graph' ifTrue: [  ]"
+
 ]
 
 { #category : #accessing }
