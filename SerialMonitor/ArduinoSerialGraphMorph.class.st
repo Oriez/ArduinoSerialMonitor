@@ -1,6 +1,6 @@
 Class {
 	#name : #ArduinoSerialGraphMorph,
-	#superclass : #RubScrolledTextMorph,
+	#superclass : #ArduinoSerialBasicMorph,
 	#instVars : [
 		'error',
 		'movingCamera'
@@ -34,7 +34,7 @@ ArduinoSerialGraphMorph class >> initialize: selectedPort [
 
 	model := ArduinoSerial initializeWithPort: selectedPort. 
 	
-	aMorph := self new initializeWithModel: model.
+	aMorph := self new initialize: model.
 	
 	aMorph addMorph: graphView canvas buildMorph.
 	^ aMorph
@@ -43,41 +43,6 @@ ArduinoSerialGraphMorph class >> initialize: selectedPort [
 { #category : #'as yet unclassified' }
 ArduinoSerialGraphMorph class >> open [
     self new openInWorld
-]
-
-{ #category : #'as yet unclassified' }
-ArduinoSerialGraphMorph >> changePort: newPort [
-	| tempModel |
-	tempModel := ArduinoSerial initializeWithPort: newPort.
-   self model: tempModel.
-]
-
-{ #category : #'as yet unclassified' }
-ArduinoSerialGraphMorph >> closePort [    self model close.
-]
-
-{ #category : #initialization }
-ArduinoSerialGraphMorph >> initializeWithModel: newModel [
-   self model: newModel.
-
-
-]
-
-{ #category : #display }
-ArduinoSerialGraphMorph >> openInWorld [
-    | window |
-    window := SystemWindow labelled: 'Serial Monitor'.
-	 window addMorph: self frame: (0@0 corner: 1@1).
-    window announcer
-        when: WindowClosed
-        send: #closePort
-        to: self.
-    window openInWorld.
-]
-
-{ #category : #'as yet unclassified' }
-ArduinoSerialGraphMorph >> step [
-    self model announcer announce: RubTextUpdatedInModel
 ]
 
 { #category : #'model - stepping' }

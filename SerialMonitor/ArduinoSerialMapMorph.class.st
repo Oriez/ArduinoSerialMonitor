@@ -1,6 +1,6 @@
 Class {
 	#name : #ArduinoSerialMapMorph,
-	#superclass : #RubScrolledTextMorph,
+	#superclass : #ArduinoSerialBasicMorph,
 	#instVars : [
 		'error',
 		'movingCamera'
@@ -53,33 +53,12 @@ ArduinoSerialMapMorph >> changePort: newPort [
    self model: tempModel.
 ]
 
-{ #category : #'as yet unclassified' }
-ArduinoSerialMapMorph >> closePort [    self model close.
-]
-
 { #category : #initialization }
 ArduinoSerialMapMorph >> initializeWithModel: newModel movingCamera: aMovingCamera [
 	movingCamera := aMovingCamera.
    self model: newModel.
 
 
-]
-
-{ #category : #display }
-ArduinoSerialMapMorph >> openInWorld [
-    | window |
-    window := SystemWindow labelled: 'Serial Monitor'.
-	 window addMorph: self frame: (0@0 corner: 1@1).
-    window announcer
-        when: WindowClosed
-        send: #closePort
-        to: self.
-    window openInWorld.
-]
-
-{ #category : #'as yet unclassified' }
-ArduinoSerialMapMorph >> step [
-    self model announcer announce: RubTextUpdatedInModel
 ]
 
 { #category : #'model - stepping' }

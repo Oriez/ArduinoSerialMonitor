@@ -67,5 +67,5 @@ ArduinoSerialBasicMorph >> step [
 
 { #category : #'model - stepping' }
 ArduinoSerialBasicMorph >> stepTime [
-    ^1000
+    ^100
 ]
