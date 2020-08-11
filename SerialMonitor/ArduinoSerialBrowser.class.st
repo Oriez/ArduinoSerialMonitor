@@ -19,7 +19,10 @@ Class {
 		'portListLabel',
 		'serialOptionsLabel',
 		'selectedPort',
-		'displayedMorph'
+		'displayedMorph',
+		'baudDropList',
+		'baudRateLabel',
+		'selectedBaud'
 	],
 	#category : #SerialMonitor
 }
@@ -35,10 +38,31 @@ ArduinoSerialBrowser class >> defaultSpec [
 		row add: #listPorts; add: #listOptions]
 	origin: 0 @ 0.05 corner: 1 @ 0.5;
 	
+	newRow: [ :row |
+		row add: #baudRateLabel; add: #baudDropList]
+	origin: 0.15 @ 0.5 corner: 0.5 @ 0.55;
+	
 	newRow: [ :row | row add: #displayObject ]
-	origin: 0 @ 0.5 corner: 1 @ 1;
+	origin: 0 @ 0.55 corner: 1 @ 1;
 	
 	yourself 
+]
+
+{ #category : #accessing }
+ArduinoSerialBrowser >> baudDropList [
+	^baudDropList 
+]
+
+{ #category : #accessing }
+ArduinoSerialBrowser >> baudRateLabel [
+	^baudRateLabel
+]
+
+{ #category : #'as yet unclassified' }
+ArduinoSerialBrowser >> buildBaudList [
+	baudDropList := self newDropList items: #(300 1200 2400 4800 9600 19200 38400 57600 74880 115200 230400 250000 500000 1000000).
+	
+	^9600
 ]
 
 { #category : #'as yet unclassified' }
@@ -92,6 +116,7 @@ ArduinoSerialBrowser >> extent [
 ArduinoSerialBrowser >> initializePresenter [
 	listOptions whenSelectedItemChanged: [ :text | self selectOption: text ]. 
 	listPorts whenSelectedItemChanged: [ :text | self selectPort: text  ].
+   baudDropList whenSelectedItemChanged: [:text | self selectBaud: text  ].
 	
 ]
 
@@ -100,20 +125,26 @@ ArduinoSerialBrowser >> initializeWidgets [
 	"widget instantiation"
 	currentPlatform := OSPlatform current.
 	selectedOptions := self buildMonitorOptionsList.
+	
+	selectedBaud := self buildBaudList. 
+	baudRateLabel := self newLabel.
+	baudRateLabel label: 'Baud rate: '.
+	
 	serialOptionsLabel := self newLabel.
 	serialOptionsLabel label: 'Monitor View Options'.
-	
 	selectedPort := self buildPortList.
+	
 	portListLabel := self newLabel.
 	portListLabel label: 'Port List'.
 	
-	displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort.
+	displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort baud: selectedBaud.
 	displayObject := displayedMorph extent:400@300; asSpecAdapter.
 	
 	"specification of order of focus"
 	self focusOrder
 	add: listOptions;
 	add: listPorts;
+	add: baudDropList;
 	add: portListLabel
 ]
 
@@ -138,14 +169,20 @@ ArduinoSerialBrowser >> portListLabel [
 ]
 
 { #category : #'as yet unclassified' }
+ArduinoSerialBrowser >> selectBaud: aSelectedBaud [
+	selectedBaud := aSelectedBaud.
+	displayedMorph changeBaudRate: aSelectedBaud.
+]
+
+{ #category : #'as yet unclassified' }
 ArduinoSerialBrowser >> selectOption: text [
 	| selected |
 	text = 'Basic' ifTrue: [ 
-		displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort. 
+		displayedMorph := ArduinoSerialBasicMorph initialize: selectedPort baud: selectedBaud. 
 		selected:= 1
 		].
 	text = 'Map' ifTrue: [ 
-		displayedMorph := ArduinoSerialMapMorph initialize: selectedPort.
+		displayedMorph := ArduinoSerialMapMorph initialize: selectedPort baud: selectedBaud.
 		selected:= 2
 		].
 	text = 'Graph' ifTrue: [ 

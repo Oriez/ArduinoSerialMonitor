@@ -9,7 +9,8 @@ Class {
 		'myPortString',
 		'map',
 		'view',
-		'movingCamera'
+		'movingCamera',
+		'baudRate'
 	],
 	#classVars : [
 		'MyPortString'
@@ -18,9 +19,9 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerialMap class >> initializeWithPortAndmovingCamera: portString movingCamera: movingCamera [
+ArduinoSerialMap class >> initializeWithPortAndmovingCamera: portString movingCamera: movingCamera baud: aBaudRate [
 	|newObject|
-	newObject := self new initialize: portString movingCamera: movingCamera.
+	newObject := self new initialize: portString movingCamera: movingCamera baud: aBaudRate.
 	^ newObject
 ]
 
@@ -62,9 +63,10 @@ ArduinoSerialMap >> getText [
 ]
 
 { #category : #'as yet unclassified' }
-ArduinoSerialMap >> initialize: portString movingCamera: aMovingCamera [
+ArduinoSerialMap >> initialize: portString movingCamera: aMovingCamera baud: aBaudRate [
 	myPortString := portString.
 	movingCamera := aMovingCamera.
+	baudRate := aBaudRate.
 	SerialPort allInstances do: [:port| port close].
 
    
@@ -72,9 +74,8 @@ ArduinoSerialMap >> initialize: portString movingCamera: aMovingCamera [
 
 { #category : #accessing }
 ArduinoSerialMap >> port [
-	| baudRate comPortNumber |
+	| comPortNumber |
 	SerialPort allInstances do: [ :port | port close ].
-	baudRate := 9600.
 	comPortNumber := myPortString.
 	(myPort isNil or: [ myPort isClosed ])
 		ifTrue: [ myPort := SerialPort new

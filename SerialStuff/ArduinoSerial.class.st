@@ -6,7 +6,8 @@ Class {
 		'myPort',
 		'error',
 		'text',
-		'myPortString'
+		'myPortString',
+		'baudRate'
 	],
 	#classVars : [
 		'MyPortString'
@@ -15,9 +16,9 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerial class >> initializeWithPort: portString [
+ArduinoSerial class >> initializeWithArgs: portString baud: aBaudRate [
 	|newObject|
-	newObject := self new initialize: portString.
+	newObject := self new initialize: portString baud: aBaudRate.
 	^ newObject
 ]
 
@@ -50,8 +51,9 @@ ArduinoSerial >> getText [
 ]
 
 { #category : #'as yet unclassified' }
-ArduinoSerial >> initialize: portString [
+ArduinoSerial >> initialize: portString baud: aBaudRate [
 	myPortString := portString.
+	baudRate := aBaudRate.
 	SerialPort allInstances do: [:port| port close].
 
    
@@ -59,9 +61,8 @@ ArduinoSerial >> initialize: portString [
 
 { #category : #accessing }
 ArduinoSerial >> port [
-	| baudRate comPortNumber |
+	| comPortNumber |
 	SerialPort allInstances do: [ :port | port close ].
-	baudRate := 9600.
 	comPortNumber := myPortString.
 	(myPort isNil or: [ myPort isClosed ])
 		ifTrue: [ myPort := SerialPort new

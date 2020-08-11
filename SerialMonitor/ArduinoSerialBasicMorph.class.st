@@ -2,15 +2,17 @@ Class {
 	#name : #ArduinoSerialBasicMorph,
 	#superclass : #RubScrolledTextMorph,
 	#instVars : [
-		'error'
+		'error',
+		'selectedPort',
+		'selectedBaud'
 	],
 	#category : #SerialMonitor
 }
 
 { #category : #initialization }
-ArduinoSerialBasicMorph class >> initialize: selectedPort [
+ArduinoSerialBasicMorph class >> initialize: selectedPort baud: selectedBaud [
 	|newObject model |
-	model := ArduinoSerial initializeWithPort: selectedPort.
+	model := ArduinoSerial initializeWithArgs: selectedPort baud: selectedBaud.
 	newObject := self new initialize: model.
 	^ newObject
 ]
@@ -21,9 +23,18 @@ ArduinoSerialBasicMorph class >> open [
 ]
 
 { #category : #'as yet unclassified' }
+ArduinoSerialBasicMorph >> changeBaudRate: aBaudRate [
+	| tempModel |
+	selectedBaud := aBaudRate.
+	tempModel := ArduinoSerial initializeWithArgs: selectedPort baud: aBaudRate.
+	self model: tempModel.
+]
+
+{ #category : #'as yet unclassified' }
 ArduinoSerialBasicMorph >> changePort: newPort [
 	| tempModel |
-	tempModel := ArduinoSerial initializeWithPort: newPort.
+	tempModel := ArduinoSerial initializeWithArgs: newPort baud: selectedBaud.
+	selectedPort := newPort.
    self model: tempModel.
 ]
 
@@ -34,7 +45,7 @@ ArduinoSerialBasicMorph >> closePort [    self model close.
 { #category : #initialization }
 ArduinoSerialBasicMorph >> initialize [ | tempModel |
 	super initialize.
-	tempModel := ArduinoSerial initializeWithPort: '/dev/cu.wchusbserial1410'.
+	tempModel := ArduinoSerial initializeWithArgs: '/dev/cu.wchusbserial1410' baud: 9600.
    self model: tempModel.
 
 
