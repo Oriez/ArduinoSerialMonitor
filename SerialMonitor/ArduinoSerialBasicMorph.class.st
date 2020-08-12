@@ -25,7 +25,7 @@ ArduinoSerialBasicMorph class >> open [
 { #category : #'as yet unclassified' }
 ArduinoSerialBasicMorph >> changeBaudRate: aBaudRate [
 	| tempModel |
-	selectedBaud := aBaudRate.
+	self setSelectedBaud: aBaudRate.
 	tempModel := ArduinoSerial initializeWithArgs: selectedPort baud: aBaudRate.
 	self model: tempModel.
 ]
@@ -34,12 +34,22 @@ ArduinoSerialBasicMorph >> changeBaudRate: aBaudRate [
 ArduinoSerialBasicMorph >> changePort: newPort [
 	| tempModel |
 	tempModel := ArduinoSerial initializeWithArgs: newPort baud: selectedBaud.
-	selectedPort := newPort.
+	self setSelectedPort: newPort.
    self model: tempModel.
 ]
 
 { #category : #'as yet unclassified' }
 ArduinoSerialBasicMorph >> closePort [    self model close.
+]
+
+{ #category : #'as yet unclassified' }
+ArduinoSerialBasicMorph >> getSelectedBaud [
+	^selectedBaud 
+]
+
+{ #category : #'as yet unclassified' }
+ArduinoSerialBasicMorph >> getSelectedPort [
+	^selectedPort 
 ]
 
 { #category : #initialization }
@@ -69,6 +79,17 @@ ArduinoSerialBasicMorph >> openInWorld [
         send: #closePort
         to: self.
     window openInWorld.
+]
+
+{ #category : #initialization }
+ArduinoSerialBasicMorph >> setSelectedBaud: baud [
+	selectedBaud := baud
+	
+]
+
+{ #category : #initialization }
+ArduinoSerialBasicMorph >> setSelectedPort: port [
+	selectedPort := port
 ]
 
 { #category : #'as yet unclassified' }

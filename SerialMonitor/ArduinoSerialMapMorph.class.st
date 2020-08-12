@@ -9,39 +9,6 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerialMapMorph class >> initialize: selectedPort [
-	|map e coordinates view aMorph movingCamera model |
-
-	view := RTView new
-	   setCanvas: (TRCanvas new extent: 400 @ 300; yourself);
-    	yourself.
-	map := RTOSM new.
-	e := map element.
-
-	view add: e.
-
-	coordinates := 32.1227355 @ 34.8066798.
-
-	view @ RTDraggableView @ RTZoomableView.
-   movingCamera := [ :locationLatLong |
-		view canvas camera translateTo: 
-			(map latLonToRoassal: locationLatLong). 
-		view signalUpdate ].
-	view canvas camera translateTo: (map latLonToRoassal: coordinates).
-	view canvas camera noInitializationWhenOpen.
-	view canvas camera scale: 30.0.
-
-	model := ArduinoSerialMap initializeWithPortAndmovingCamera: selectedPort movingCamera: movingCamera. 
-	
-	aMorph := self new initializeWithModel: model movingCamera: movingCamera.
-	
-	aMorph addMorph: view canvas buildMorph.
-
-
-	^ aMorph
-]
-
-{ #category : #initialization }
 ArduinoSerialMapMorph class >> initialize: selectedPort baud: aBaudRate [
 	|map e coordinates view aMorph movingCamera model |
 
@@ -80,10 +47,28 @@ ArduinoSerialMapMorph class >> open [
 ]
 
 { #category : #'as yet unclassified' }
-ArduinoSerialMapMorph >> changePort: newPort [
-	| tempModel |
-	tempModel := ArduinoSerialMap initializeWithPortAndmovingCamera: newPort movingCamera: movingCamera baud: 9600.
+ArduinoSerialMapMorph >> changeBaudRate: newBaudRate [
+	| tempModel currentPort |
+	currentPort := self getSelectedPort.
+	tempModel := ArduinoSerialMap initializeWithPortAndmovingCamera: currentPort movingCamera: movingCamera baud: newBaudRate.
+	self setSelectedBaud: newBaudRate.
+   self model: tempModel.
+]
 
+{ #category : #'as yet unclassified' }
+ArduinoSerialMapMorph >> changePort: newPort [
+	| tempModel currentBaud |
+	currentBaud := self getSelectedBaud.
+	tempModel := ArduinoSerialMap initializeWithPortAndmovingCamera: newPort movingCamera: movingCamera baud: currentBaud.
+	self setSelectedPort: newPort.
+   self model: tempModel.
+]
+
+{ #category : #initialization }
+ArduinoSerialMapMorph >> initialize [
+	| tempModel |
+	super initialize.
+	tempModel := ArduinoSerialMap initializeWithPortAndmovingCamera: '/dev/cu.wchusbserial1410' movingCamera: movingCamera baud: 9600.
    self model: tempModel.
 ]
 

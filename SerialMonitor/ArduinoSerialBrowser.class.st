@@ -186,7 +186,7 @@ ArduinoSerialBrowser >> selectOption: text [
 		selected:= 2
 		].
 	text = 'Graph' ifTrue: [ 
-		displayedMorph := ArduinoSerialGraphMorph initialize: selectedPort.
+		displayedMorph := ArduinoSerialGraphMorph initialize: selectedPort baud: selectedBaud.
 		selected:= 3
 		].
 	text ifNotNil: [ 
