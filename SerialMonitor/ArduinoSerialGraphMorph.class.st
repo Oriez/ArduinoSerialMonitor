@@ -10,9 +10,8 @@ Class {
 
 { #category : #initialization }
 ArduinoSerialGraphMorph class >> initialize: selectedPort baud: selectedBaud [
-	| points1 points2 ds graphView model aMorph graph |
-	points1 := #(1 1 4 6).
-	points2 := #(2 4 2 10 5 2).
+	| points1 ds graphView model aMorph graph updateGraph |
+	points1 := #(5 8 5 9).
 
 	graph := RTGrapher new.
 	
@@ -21,18 +20,21 @@ ArduinoSerialGraphMorph class >> initialize: selectedPort baud: selectedBaud [
 	ds connectColor: Color blue.
 	ds y: #yourself.
 	graph add: ds.
-	
-	ds := RTData new.
-	ds points: points2.
-	ds connectColor: Color green.
-	ds y: #yourself.
-	graph add: ds.
 
+	updateGraph := [ :points |
+		graph cleanView.
+		ds := RTData new.
+		ds points: points.
+		ds connectColor: Color blue.
+		ds y: #yourself.
+		graph add: ds.
+		graph render ].
+	
 	graph axisX noLabel; noTick.
 	aMorph  := RubScrolledTextMorph new.
 	graphView := graph build.
 
-	model := ArduinoSerial initializeWithArgs: selectedPort baud: selectedBaud. 
+	model := ArduinoSerialGraph initializeWithPortAndGraphData: selectedPort updateGraph: updateGraph baud:  selectedBaud. 
 	
 	aMorph := self new initialize: model.
 	
