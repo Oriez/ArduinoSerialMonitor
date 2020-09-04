@@ -4,13 +4,10 @@ Class {
 	#instVars : [
 		'pollTime',
 		'myPort',
-		'error',
 		'text',
+		'baudRate',
 		'myPortString',
-		'baudRate'
-	],
-	#classVars : [
-		'MyPortString'
+		'error'
 	],
 	#category : #SerialStuff
 }
@@ -83,5 +80,5 @@ ArduinoSerial >> returnText [
 
 { #category : #'as yet unclassified' }
 ArduinoSerial >> setPort: portString [ 
-	MyPortString := portString.
+	myPortString := portString.
 ]
