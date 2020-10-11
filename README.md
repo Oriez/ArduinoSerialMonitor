@@ -7,8 +7,8 @@ Pharo implemintation for Arduino Serial Monitor
 Use iceberg to clone this repository (`https://github.com/Oriez/ArduinoSerialMonitor.git`).
 # Usage
 You will find 2 packages -
-* `SerialMonitor` - The graphical modules 
-* `SerialStuff` - The serial functions classes
+* `SerialMonitorViews` - The graphical modules 
+* `SerialMonitorModels` - The serial functions classes
 
 To run the serial monitor in the Playground - `ArduinoSerialBrowser new openWithSpec.`
 (assuming you have an Arduino connected to your PC)
@@ -19,9 +19,9 @@ To run the serial monitor in the Playground - `ArduinoSerialBrowser new openWith
 * Graph - TODO
 
 ### How to add a new view?
-1. Extend `ArduinoSerialBasicMorph` class -
+1. Extend `ArduinoSerialBasicMorph` class (under SerialMonitorViews) -
    - Create class initialize function that will init a self object that hold a model (of type `ArduinoSerial`) and add your view to this morph (addMorph).
-2. Extend `ArduinoSerial` class - 
+2. Extend `ArduinoSerial` class (under SerialMonitorModels) - 
    - To create a model that handle the string parsing and update the model each stepTime.
    - Init your model with an update function or a variable that you will use each time a text is parsed from the Arduino.
 3. connect your morph to the main class `ArduinoSerialBrowser` -
