@@ -26,6 +26,12 @@ ArduinoSerialMapMorph class >> initialize: selectedPort baud: aBaudRate [
    movingCamera := [ :locationLatLong |
 		view canvas camera translateTo: 
 			(map latLonToRoassal: locationLatLong). 
+		e := (RTEllipse new
+			  size: 0.3;
+			  color: (Color blue alpha: 1)) elementOn: 2.
+			e @ RTPopup @ RTHighlightable.
+			e translateTo: (map latLonToRoassal: locationLatLong).
+		view add: e.
 		view signalUpdate ].
 	view canvas camera translateTo: (map latLonToRoassal: coordinates).
 	view canvas camera noInitializationWhenOpen.
