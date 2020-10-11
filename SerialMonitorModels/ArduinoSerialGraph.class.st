@@ -9,7 +9,7 @@ Class {
 	#classVars : [
 		'MyPortString'
 	],
-	#category : #SerialStuff
+	#category : #SerialMonitorModels
 }
 
 { #category : #initialization }

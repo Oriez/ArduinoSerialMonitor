@@ -1,11 +1,11 @@
 Extension { #name : #SerialPort }
 
-{ #category : #'*SerialStuff' }
+{ #category : #'*SerialMonitorModels' }
 SerialPort >> isClosed [
     ^ port isNil
 ]
 
-{ #category : #'*SerialStuff' }
+{ #category : #'*SerialMonitorModels' }
 SerialPort >> openPort: portId [ 
 	"Open the given serial port, using the settings specified by my
 	instance variables."

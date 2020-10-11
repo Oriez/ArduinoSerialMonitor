@@ -6,7 +6,7 @@ Class {
 		'selectedPort',
 		'selectedBaud'
 	],
-	#category : #SerialMonitor
+	#category : #SerialMonitorViews
 }
 
 { #category : #initialization }

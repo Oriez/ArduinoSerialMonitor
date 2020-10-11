@@ -9,7 +9,7 @@ Class {
 		'myPortString',
 		'error'
 	],
-	#category : #SerialStuff
+	#category : #SerialMonitorModels
 }
 
 { #category : #initialization }

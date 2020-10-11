@@ -5,7 +5,7 @@ Class {
 		'error',
 		'movingCamera'
 	],
-	#category : #SerialMonitor
+	#category : #SerialMonitorViews
 }
 
 { #category : #initialization }

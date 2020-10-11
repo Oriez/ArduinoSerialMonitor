@@ -24,7 +24,7 @@ Class {
 		'baudRateLabel',
 		'selectedBaud'
 	],
-	#category : #SerialMonitor
+	#category : #SerialMonitorViews
 }
 
 { #category : #specs }
