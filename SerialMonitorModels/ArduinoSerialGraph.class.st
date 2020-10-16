@@ -13,23 +13,28 @@ Class {
 }
 
 { #category : #initialization }
-ArduinoSerialGraph class >> initializeWithPortAndGraphData: portString updateGraph: updateGraph baud: aBaudRate [
+ArduinoSerialGraph class >> initializeWithPortAndGraphData: portString updateGraph: aUpdateGraph baud: aBaudRate [
 	|newObject|
-	newObject := self new initialize: portString updateGraph: updateGraph baud: aBaudRate.
+	newObject := self new initialize: portString updateGraph: aUpdateGraph baud: aBaudRate.
 	^ newObject
 ]
 
 { #category : #'as yet unclassified' }
 ArduinoSerialGraph >> appendText: aString [
-   | number |
+   | number is_match |
 	text ifNil: [text := ''].
    text ifNotNil: [ 
-		aString isAllDigits ifTrue: [  
-			number := aString asNumber.
-		   points add: number.
-		   updateGraph value: points.
+		aString splitOn: Character cr do: [ 
+			:each |
+			is_match := each asString matchesRegex: '[0-9\-]*'.
+			is_match ifTrue: [  
+			number := each asNumber.
+			"number := 200 atRandom - 100."
+		   updateGraph value: number.
+			 ]
 		]
-	 ]. text , aString.
+	 ]. 
+	text := text , aString.
 ]
 
 { #category : #'as yet unclassified' }

@@ -40,9 +40,9 @@ ArduinoSerial >> getText [
         nRead isZero
 		    ifFalse: [self appendText: (buffer copyFrom: 1 to: nRead)].
     ] on: PrimitiveFailed
-      do: [ error := true.
+      do: [ "error := true.
             self port close.
-            self appendText: 'PRIMITIVE ERROR READING PORT !!'.
+            self appendText: 'PRIMITIVE ERROR READING PORT !!'."
           ].
 	^text
 ]
