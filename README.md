@@ -16,7 +16,7 @@ To run the serial monitor in the Playground - `ArduinoSerialBrowser new openWith
 # Available views
 * Basic - Text view, like in Arduino IDE.
 * Map - Show realtime location (text should be formatted like this `<lat>@<lon>`)
-* Graph - TODO
+* Graph - realtime graph showing a positive / negative level.
 
 ### How to add a new view?
 1. Extend `ArduinoSerialBasicMorph` class (under SerialMonitorViews) -
